@@ -29,34 +29,39 @@ function updateProjectStatus(id: string, status: ProjectStatus): void {
 </script>
 
 <template>
-  <main class="bg-blue-950 text-white min-h-screen m-0 p-0">
+  <main class="bg-blue-950 text-white min-h-screen m-0 p-0 flex flex-col">
     <header class="bg-black text-white p-4 rounded-b-lg font-bold text-center">
       <h1>Project Board</h1>
     </header>
 
-    <section class="controls">
-      <ProjectForm @add-project="addProject" />
+    <div class="flex flex-1 flex-col gap-4 p-4 sm:flex-row sm:items-stretch sm:justify-between">
+      <ProjectForm @add-project="addProject" class="sm:w-1/3" />
 
-      <div class="filter-summary">
-        <ProjectFilter v-model="selectedStatus" />
-        <ProjectSummary :projects="projects" />
+      <div class="flex flex-col gap-4 sm:w-2/3">
+        <section class="flex w-full gap-4 sm:items-stretch">
+          <ProjectFilter v-model="selectedStatus" class="w-1/3" />
+          <ProjectSummary :projects="projects" class="w-2/3" />
+        </section>
+
+        <section class="projects">
+          <h2>Projekt</h2>
+          <div v-if="filteredProjects.length === 0">Inga projekt hittades.</div>
+          <ul>
+            <li v-for="project in filteredProjects" :key="project.id">
+              <ProjectCard :project="project" @remove="removeProject" @change-status="updateProjectStatus" />
+            </li>
+          </ul>
+        </section>
       </div>
-    </section>
-
-    <section class="projects">
-      <h2>Projekt</h2>
-      <div v-if="filteredProjects.length === 0">Inga projekt hittades.</div>
-      <ul>
-        <li v-for="project in filteredProjects" :key="project.id">
-          <ProjectCard :project="project" @remove="removeProject" @change-status="updateProjectStatus" />
-        </li>
-      </ul>
-    </section>
+    </div>
   </main>
 </template>
 
 <style scoped>
-.controls { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px }
-.filter-summary { display: flex; gap: 16px; align-items: center }
-.projects ul { list-style: none; padding: 0; display: grid; gap: 12px }
+.projects ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 12px
+}
 </style>
