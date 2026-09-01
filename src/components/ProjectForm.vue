@@ -25,11 +25,11 @@ function submitProject(): void {
 }
 </script>
 <template>
-    <form @submit.prevent="submitProject">
+    <form @submit.prevent="submitProject" class="flex flex-row gap-2">
         <label for="title">Titel</label>
-        <input id="title" v-model="title" type="text" />
+        <input id="title" v-model="title" type="text" class="inputfield"/>
         <label for="description">Beskrivning</label>
-        <textarea id="description" v-model="description" />
+        <textarea id="description" v-model="description" class="inputfield"/>
         <label for="status">Status</label>
         <select id="status" v-model="status">
             <option value="planned">Planerad</option>
@@ -40,3 +40,24 @@ function submitProject(): void {
         <button type="submit">Lägg till projekt</button>
     </form>
 </template>
+
+<style scoped>
+.inputfield {
+  border: 2px solid transparent;
+  width: 15em;
+  height: 2.5em;
+  padding-left: 0.8em;
+  outline: none;
+  overflow: hidden;
+  background-color: #F3F3F3;
+  border-radius: 10px;
+  transition: all 0.5s;
+}
+
+.inputfield:hover,
+.inputfield:focus {
+  border: 2px solid #4A9DEC;
+  box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
+  background-color: white;
+}
+</style>

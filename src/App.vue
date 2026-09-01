@@ -29,8 +29,8 @@ function updateProjectStatus(id: string, status: ProjectStatus): void {
 </script>
 
 <template>
-  <main>
-    <header>
+  <main class="bg-blue-950 text-white min-h-screen m-0 p-0">
+    <header class="bg-black text-white p-4 rounded-b-lg font-bold text-center">
       <h1>Project Board</h1>
     </header>
 
