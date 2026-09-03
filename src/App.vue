@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import type { Project, ProjectStatus } from './types/Project'
 import { loadProjects, saveProjects } from './services/projectstorage'
 import ProjectForm from './components/ProjectForm.vue'
@@ -7,8 +7,12 @@ import ProjectFilter from './components/ProjectFilter.vue'
 import ProjectSummary from './components/ProjectSummary.vue'
 import ProjectCard from './components/ProjectCard.vue'
 
-const projects = ref<Project[]>(loadProjects())
+const projects = ref<Project[]>([])
 watch(projects, newProjects => saveProjects(newProjects), { deep: true })
+
+onMounted(async () => {
+  projects.value = await loadProjects()
+})
 
 const selectedStatus = ref<ProjectStatus | 'all'>('all')
 const filteredProjects = computed(() => {
@@ -39,12 +43,15 @@ function updateProjectStatus(id: string, status: ProjectStatus): void {
 
       <div class="flex flex-col gap-4 sm:w-2/3">
         <section class="flex w-full gap-4 sm:items-stretch">
-          <ProjectFilter v-model="selectedStatus" class="w-1/3" />
           <ProjectSummary :projects="projects" class="w-2/3" />
+          <ProjectFilter v-model="selectedStatus" class="w-1/3" />
         </section>
 
         <section class="projects">
-          <h2>Projekt</h2>
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Projekt</h2>
+            <button @click="saveProjects(projects)" class="rounded-lg bg-green-600 px-3 py-1 text-sm font-medium text-white transition hover:bg-green-700">Spara till databas</button>
+          </div>
           <div v-if="filteredProjects.length === 0">Inga projekt hittades.</div>
           <ul>
             <li v-for="project in filteredProjects" :key="project.id">

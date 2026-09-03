@@ -1,14 +1,24 @@
 import type { Project } from '../types/Project'
-const STORAGE_KEY = 'projectboard-projects'
-export function loadProjects(): Project[] {
-    const data = localStorage.getItem(STORAGE_KEY)
-    if (!data) return []
+
+const API_URL = 'http://localhost:8001/api/projects'
+
+export async function loadProjects(): Promise<Project[]> {
     try {
-        return JSON.parse(data) as Project[]
+        const response = await fetch(API_URL)
+        if (!response.ok) throw new Error(`Request failed: ${response.status}`)
+
+        const data: unknown = await response.json()
+        return Array.isArray(data) ? data as Project[] : []
     } catch {
+        alert('Failed to load projects from database');
         return []
     }
 }
-export function saveProjects(projects: Project[]): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects))
+
+export async function saveProjects(projects: Project[]): Promise<void> {
+    try {
+        // To implement: Send a POST request to the API with the projects data
+    } catch {
+        alert('Failed to save projects to database');
+    }
 }
