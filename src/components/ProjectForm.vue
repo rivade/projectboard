@@ -16,7 +16,6 @@ function submitProject(): void {
         title: title.value.trim(),
         description: description.value.trim(),
         status: status.value,
-        createdAt: new Date().toISOString()
     })
     title.value = ''
     description.value = ''

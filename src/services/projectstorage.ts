@@ -15,10 +15,37 @@ export async function loadProjects(): Promise<Project[]> {
     }
 }
 
-export async function saveProjects(projects: Project[]): Promise<void> {
+export async function postProject(project: Project): Promise<void> {
     try {
-        // To implement: Send a POST request to the API with the projects data
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(project)
+        })
+
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.status}`)
+        }
     } catch {
-        alert('Failed to save projects to database');
+        alert('Failed to save project to database')
     }
+}
+
+export async function deleteProject(projectId: string): Promise<void> {
+  try {
+    const response = await fetch(`${API_URL}/${projectId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`)
+    }
+  } catch {
+    alert(projectId + ' Failed to delete project from database')
+  }
 }
