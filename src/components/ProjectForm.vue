@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Project, ProjectStatus } from '../types/Project'
+
 const emit = defineEmits<{ addProject: [project: Project] }>()
 const title = ref('')
 const description = ref('')
@@ -12,7 +13,7 @@ function submitProject(): void {
         return
     }
     emit('addProject', {
-        id: crypto.randomUUID(),
+        id: '',
         title: title.value.trim(),
         description: description.value.trim(),
         status: status.value,

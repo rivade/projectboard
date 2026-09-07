@@ -11,9 +11,6 @@ const projects = ref<Project[]>([])
 
 onMounted(async () => {
   projects.value = await loadProjects()
-  projects.value.forEach(element => {
-    console.log('Project:', element.id)
-  });
 })
 
 const selectedStatus = ref<ProjectStatus | 'all'>('all')
@@ -22,14 +19,17 @@ const filteredProjects = computed(() => {
   return projects.value.filter(p => p.status === selectedStatus.value)
 })
 
-function addProject(project: Project): void {
-  projects.value.push(project)
-  postProject(project);
+async function addProject(project: Project): Promise<void> {
+  const savedProject = await postProject(project)
+
+  if (savedProject) {
+    projects.value = [...projects.value, savedProject]
+  }
 }
-function removeProject(id: string): void {
-  alert('Ta bort projekt med id: ' + id)
+
+async function removeProject(id: string): Promise<void> {
   projects.value = projects.value.filter(p => p.id !== id)
-  //deleteProject(id)
+  await deleteProject(id)
 }
 function updateProjectStatus(id: string, status: ProjectStatus): void {
   const project = projects.value.find(p => p.id === id)
