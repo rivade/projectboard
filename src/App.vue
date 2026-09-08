@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import type { Project, ProjectStatus } from './types/Project'
-import { loadProjects, postProject, deleteProject } from './services/projectstorage'
+import { loadProjectsFromDatabase, postProjectDatabase, deleteProjectDatabase, updateProjectDatabase } from './services/projectstorage'
 import ProjectForm from './components/ProjectForm.vue'
 import ProjectFilter from './components/ProjectFilter.vue'
 import ProjectSummary from './components/ProjectSummary.vue'
@@ -10,7 +10,7 @@ import ProjectCard from './components/ProjectCard.vue'
 const projects = ref<Project[]>([])
 
 onMounted(async () => {
-  projects.value = await loadProjects()
+  projects.value = await loadProjectsFromDatabase()
 })
 
 const selectedStatus = ref<ProjectStatus | 'all'>('all')
@@ -20,7 +20,7 @@ const filteredProjects = computed(() => {
 })
 
 async function addProject(project: Project): Promise<void> {
-  const savedProject = await postProject(project)
+  const savedProject = await postProjectDatabase(project)
 
   if (savedProject) {
     projects.value = [...projects.value, savedProject]
@@ -29,11 +29,18 @@ async function addProject(project: Project): Promise<void> {
 
 async function removeProject(id: string): Promise<void> {
   projects.value = projects.value.filter(p => p.id !== id)
-  await deleteProject(id)
+  await deleteProjectDatabase(id)
 }
-function updateProjectStatus(id: string, status: ProjectStatus): void {
+
+async function updateProjectStatus(id: string, status: ProjectStatus): Promise<void> {
   const project = projects.value.find(p => p.id === id)
-  if (project) project.status = status
+  if (!project) return
+
+  const serverProject = await updateProjectDatabase(project, status)
+
+  if (serverProject) {
+    project.status = serverProject.status
+  }
 }
 </script>
 

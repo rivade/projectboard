@@ -41,7 +41,7 @@ function mapMongoProject(item: Record<string, unknown>): Project {
     }
 }
 
-export async function loadProjects(): Promise<Project[]> {
+export async function loadProjectsFromDatabase(): Promise<Project[]> {
     try {
         const response = await fetch(API_URL)
         if (!response.ok) throw new Error(`Request failed: ${response.status}`)
@@ -59,7 +59,7 @@ export async function loadProjects(): Promise<Project[]> {
     }
 }
 
-export async function postProject(project: Project): Promise<Project | null> {
+export async function postProjectDatabase(project: Project): Promise<Project | null> {
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -86,7 +86,7 @@ export async function postProject(project: Project): Promise<Project | null> {
     }
 }
 
-export async function deleteProject(projectId: string): Promise<void> {
+export async function deleteProjectDatabase(projectId: string): Promise<void> {
     try {
         const response = await fetch(`${API_URL}/${projectId}`, {
             method: 'DELETE',
@@ -100,5 +100,31 @@ export async function deleteProject(projectId: string): Promise<void> {
         }
     } catch {
         alert(projectId + ' Failed to delete project from database')
+    }
+}
+
+export async function updateProjectDatabase(project: Project, status: ProjectStatus): Promise<Project | null> {
+    try {
+        const updatedProject = {
+            ...project,
+            status,
+        }
+
+        const response = await fetch(`${API_URL}/${project.id}/status/${status}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedProject)
+        })
+
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.status}`)
+        }
+
+        return updatedProject
+    } catch {
+        alert('Failed to update project in database')
+        return null
     }
 }
